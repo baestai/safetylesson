@@ -924,7 +924,411 @@ const supplementalQuestions: Question[] = supplementalQuestionSeeds.map(
   }),
 );
 
-const questions: Question[] = [...baseQuestions, ...supplementalQuestions];
+type ExpansionTopic = {
+  subjectId: Exclude<SubjectId, 'practical' | 'work'>;
+  chapter: string;
+  topic: string;
+  answers: [string, string, string, string];
+};
+
+const expansionTopics: ExpansionTopic[] = [
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '안전보건관리책임자',
+    answers: ['사업장 안전보건 업무를 총괄 관리한다', '안전보건 방침과 목표를 현장에 연결한다', '조직적 관리가 약해져 예방활동이 분산된다', '책임과 권한을 명확히 정해 실행력을 높인다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '산업안전보건위원회',
+    answers: ['노사가 안전보건 중요사항을 심의·의결한다', '교육, 규정, 재해예방계획을 논의한다', '근로자 의견 반영이 부족해진다', '회의록과 의결사항을 남겨 후속조치를 관리한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '안전보건관리규정',
+    answers: ['조직, 교육, 점검, 사고조사 기준을 정한다', '사업장 운영 기준을 문서화한다', '작업자마다 다른 기준으로 행동할 수 있다', '현장 절차와 책임을 반복 교육한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '재해조사',
+    answers: ['사실 확인 후 원인을 분석하고 재발방지대책을 세운다', '책임 추궁보다 원인 제거를 우선한다', '동일 유형 재해가 반복될 수 있다', '현장 보존과 관계자 진술을 먼저 확보한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '아차사고 관리',
+    answers: ['손실 전 위험 신호를 수집해 개선한다', '중대재해 전조를 조기에 발견한다', '잠재 위험이 방치되어 사고로 이어진다', '비난 없는 보고 문화를 만든다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '작업허가제',
+    answers: ['고위험 작업의 조건과 조치를 사전 확인한다', '화기·밀폐공간·정전 작업 전 승인한다', '격리와 감시가 누락될 수 있다', '허가 조건을 현장에서 재확인한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: 'TBM',
+    answers: ['작업 전 위험요인과 역할을 짧게 공유한다', '당일 작업 변화와 주의점을 맞춘다', '작업자 간 위험 인식 차이가 커진다', '작업 시작 전에 전원이 참여하게 한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '무재해운동',
+    answers: ['자율적 참여로 재해예방 분위기를 만든다', '목표와 실천활동을 함께 관리한다', '형식적 캠페인으로 끝날 수 있다', '실적보다 위험 개선 활동을 중심에 둔다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '보호구 관리',
+    answers: ['위험요인에 맞는 보호구를 지급·점검한다', '착용법 교육과 교체 이력을 관리한다', '손상 보호구 사용으로 보호성능이 떨어진다', '작업 전 착용 상태를 확인한다'],
+  },
+  {
+    subjectId: 'safety',
+    chapter: '안전관리 확장',
+    topic: '비상대응훈련',
+    answers: ['신고, 대피, 응급조치 역할을 숙달한다', '사고 시 행동을 빠르게 실행하게 한다', '초기 대응 지연으로 피해가 커질 수 있다', '시나리오별 반복훈련을 실시한다'],
+  },
+
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '표시장치 설계',
+    answers: ['정보를 빠르고 정확하게 읽을 수 있게 한다', '중요 정보는 눈에 잘 띄게 배치한다', '판독 오류와 반응 지연이 증가한다', '단위와 눈금을 명확히 표시한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '조종장치 설계',
+    answers: ['조작 방향과 결과가 직관적으로 맞아야 한다', '자주 쓰는 조작부는 쉽게 닿는 곳에 둔다', '오조작과 착오가 늘어난다', '형상과 위치를 구분해 혼동을 줄인다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '경보 설계',
+    answers: ['위험도에 맞는 강도와 패턴으로 알려야 한다', '주변 소음 속에서도 구별되어야 한다', '경보 피로로 실제 위험을 놓칠 수 있다', '불필요한 경보를 줄이고 우선순위를 둔다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '작업대 높이',
+    answers: ['작업자 자세와 힘 부담을 줄이도록 맞춘다', '작업 종류와 신체치수를 함께 고려한다', '허리 굽힘과 어깨 부담이 증가한다', '조절식 작업대를 우선 검토한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '반복작업',
+    answers: ['반복 빈도와 힘, 자세 부담을 함께 줄인다', '휴식과 작업순환을 배치한다', '근골격계질환 위험이 커진다', '보조도구와 자동화를 활용한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '휴먼에러',
+    answers: ['사람 실수를 전제로 절차와 설비를 설계한다', '체크리스트와 피드백으로 누락을 줄인다', '단순 주의 요구만으로는 오류가 반복된다', '오류 유발 조건을 제거한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '페일세이프',
+    answers: ['고장 시 안전한 상태가 되도록 설계한다', '정지, 차단, 경보 기능을 준비한다', '고장이 곧바로 사고로 이어질 수 있다', '고장 상태의 안전 동작을 확인한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '풀프루프',
+    answers: ['잘못 조작해도 위험으로 이어지지 않게 한다', '실수 가능 조작을 구조적으로 막는다', '사용자 실수가 사고로 연결된다', '인터록과 형상 차이를 활용한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '작업부하',
+    answers: ['신체적·정신적 부담 수준을 평가한다', '과도한 부하는 피로와 오류를 늘린다', '피로 누적으로 안전행동이 약해진다', '업무량과 휴식 주기를 조정한다'],
+  },
+  {
+    subjectId: 'human',
+    chapter: '인간공학 확장',
+    topic: '색채와 표지',
+    answers: ['색의 의미를 일관되게 적용한다', '금지·경고·지시·안내를 구분한다', '색 의미 혼동으로 위험 전달이 약해진다', '문자와 형태 정보를 함께 제공한다'],
+  },
+
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '프레스 방호',
+    answers: ['손이 위험점에 들어가지 않게 방호장치를 둔다', '양수조작식과 광전자식을 점검한다', '협착과 절단 위험이 커진다', '작업 전 클러치와 브레이크를 확인한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '롤러기',
+    answers: ['급정지장치로 말림 위험을 줄인다', '손·복부·무릎 조작 위치를 관리한다', '물림점에 신체가 말려 들어갈 수 있다', '회전 중 이물 제거를 금지한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '연삭기',
+    answers: ['덮개와 워크레스트를 적정하게 설치한다', '교체 후 시운전으로 이상을 확인한다', '숫돌 파손과 비산 위험이 있다', '균열 숫돌 사용을 금지한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '산업용 로봇',
+    answers: ['방호울과 인터록으로 접근을 통제한다', '교시 작업은 저속과 비상정지를 확인한다', '예기치 않은 동작으로 충돌·협착될 수 있다', '작업구역 출입 절차를 정한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '크레인',
+    answers: ['정격하중과 줄걸이 상태를 확인한다', '과부하방지장치와 권과방지장치를 점검한다', '낙하, 전도, 협착 위험이 있다', '작업반경 출입을 통제한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '지게차',
+    answers: ['화물을 낮게 유지하고 급회전을 피한다', '제동, 조종, 유압, 바퀴를 점검한다', '전도와 충돌 위험이 커진다', '보행자 통로와 운행 경로를 분리한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '컨베이어',
+    answers: ['비상정지장치를 접근 가능한 곳에 둔다', '풀리와 벨트 끼임부를 방호한다', '말림과 끼임 사고가 발생할 수 있다', '정비 전 전원을 차단한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '압력용기',
+    answers: ['과압 방지를 위해 안전장치를 유지한다', '압력계와 안전밸브를 정기 점검한다', '파열과 누출 사고로 이어질 수 있다', '부식과 균열 상태를 확인한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: '동력전달부',
+    answers: ['회전축과 벨트에 덮개나 울을 설치한다', '작업자가 접촉할 수 없게 격리한다', '말림과 끼임 위험이 크다', '청소·정비 전 정지 상태를 확인한다'],
+  },
+  {
+    subjectId: 'machine',
+    chapter: '기계안전 확장',
+    topic: 'LOTO',
+    answers: ['에너지 차단 후 잠금과 표지를 실시한다', '잔류에너지 방출과 무에너지 확인이 필요하다', '불시 기동으로 협착될 수 있다', '개인별 잠금장치를 사용한다'],
+  },
+
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '접지',
+    answers: ['누전 전류를 안전하게 대지로 흘린다', '접촉전압을 낮추고 차단기 동작을 돕는다', '감전과 전기화재 위험이 커진다', '접지선 단선과 접속 상태를 점검한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '누전차단기',
+    answers: ['누설전류를 감지해 전원을 차단한다', '습윤 장소와 이동전기기기에 적용한다', '누전 시 감전 시간이 길어진다', '정격감도전류와 동작시험을 확인한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '정전작업',
+    answers: ['차단, 잠금표시, 검전, 접지를 실시한다', '작업 전 전압 유무를 확인한다', '잔류전압이나 오투입으로 감전될 수 있다', '작업자에게 정전 범위를 공유한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '활선작업',
+    answers: ['절연보호구와 절연공구를 사용한다', '접근한계거리와 감시체계를 지킨다', '접촉하지 않아도 아크 위험이 있다', '젖은 상태 작업을 피한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '방폭전기',
+    answers: ['폭발성 분위기에서 점화원이 되지 않게 한다', '위험장소 등급에 맞는 구조를 선택한다', '스파크로 화재폭발이 발생할 수 있다', '방폭 표시와 유지상태를 확인한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '정전기',
+    answers: ['접지, 본딩, 가습으로 전하 축적을 줄인다', '인화성 물질 취급 시 방전을 관리한다', '스파크가 점화원이 될 수 있다', '도전성 재료와 제전장치를 활용한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '아크 플래시',
+    answers: ['보호협조와 접근 제한으로 위험을 줄인다', '분전반 작업 시 적합한 보호구를 착용한다', '고열과 압력으로 중상 위험이 있다', '전원 차단 가능성을 먼저 검토한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '임시배선',
+    answers: ['손상 방지와 과부하 방지를 관리한다', '바닥 물기와 통행로 노출을 피한다', '피복 손상으로 감전될 수 있다', '전선 보호덮개와 누전차단기를 사용한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '충전부 방호',
+    answers: ['절연덮개나 방호울로 직접 접촉을 막는다', '노출 충전부에는 위험표시를 강화한다', '접촉 감전과 단락 사고가 발생한다', '폐쇄형 외함 상태를 점검한다'],
+  },
+  {
+    subjectId: 'electric',
+    chapter: '전기안전 확장',
+    topic: '전기화재',
+    answers: ['전원 차단 후 적합한 소화기를 사용한다', '통전 중 물 사용을 피한다', '감전과 화재 확산 위험이 있다', '과열과 접속부 이상을 정기 점검한다'],
+  },
+
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '폭발범위',
+    answers: ['가연성 증기가 연소 가능한 농도 범위다', '하한계와 상한계 사이가 위험하다', '혼합기가 점화되어 폭발할 수 있다', '환기와 농도 측정으로 관리한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '인화점',
+    answers: ['인화성 증기가 발생해 불붙을 수 있는 최저 온도다', '낮을수록 상온 화재 위험이 크다', '점화원 접촉 시 화재가 발생한다', '저온 보관과 밀폐를 유지한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: 'BLEVE',
+    answers: ['가열된 액화가스 용기 파열로 발생한다', '용기 냉각과 화재 접근 제한이 중요하다', '폭발과 화구로 피해가 커질 수 있다', '저장용기 온도와 압력을 감시한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '분진폭발',
+    answers: ['가연성 분진의 부유와 점화원이 만나 발생한다', '청소와 집진, 정전기 관리가 필요하다', '작은 점화원으로도 폭발할 수 있다', '퇴적 분진을 주기적으로 제거한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: 'MSDS',
+    answers: ['물질의 유해위험성과 취급방법을 제공한다', '교육과 경고표지 이해에 활용한다', '부적절한 취급으로 중독·화재가 생길 수 있다', '작업장에 쉽게 확인 가능하게 비치한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '국소배기',
+    answers: ['오염원을 발생 지점에서 포집한다', '후드는 발생원에 가깝게 설치한다', '유해물질이 작업장으로 확산된다', '풍량과 덕트 막힘을 점검한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '반응폭주',
+    answers: ['반응열 제어 실패로 급격히 진행된다', '온도와 투입속도, 냉각능력을 관리한다', '과압과 누출, 폭발로 이어질 수 있다', '비상냉각과 압력방출을 확보한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '퍼지와 불활성화',
+    answers: ['산소 농도를 낮춰 폭발 분위기를 억제한다', '질소 등 불활성 가스를 사용한다', '가연성 혼합기가 형성될 수 있다', '산소농도와 환기 상태를 확인한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '누출대응',
+    answers: ['대피, 차단, 물질 확인 후 대응한다', 'MSDS와 보호구를 먼저 확인한다', '무방비 접근으로 중독될 수 있다', '출입통제와 흡착재 사용을 실시한다'],
+  },
+  {
+    subjectId: 'chemical',
+    chapter: '화학안전 확장',
+    topic: '혼재저장',
+    answers: ['반응 위험 물질은 분리 보관한다', '산화제와 가연물의 접촉을 피한다', '열과 유해가스 발생 위험이 있다', '라벨과 저장구역을 명확히 구분한다'],
+  },
+
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '안전난간',
+    answers: ['단부와 개구부 추락을 방지한다', '상부난간대와 중간난간대를 확인한다', '추락 사고 위험이 커진다', '난간 탈락과 높이를 점검한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '개구부',
+    answers: ['견고한 덮개와 위험표지를 설치한다', '덮개는 움직이지 않게 고정한다', '작업자가 빠져 추락할 수 있다', '야간에도 식별되게 표시한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '비계',
+    answers: ['발판, 난간, 벽이음 상태를 확인한다', '기상 악화 후 작업 전 점검한다', '추락과 붕괴 위험이 있다', '부재 풀림과 침하 여부를 점검한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '이동식비계',
+    answers: ['바퀴 고정과 수평 상태를 확인한다', '최상부 작업 시 안전난간을 설치한다', '전도와 추락 위험이 있다', '작업자가 탄 채 이동하지 않는다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '거푸집동바리',
+    answers: ['하중과 지지 조건에 맞게 설치한다', '타설 전 변형과 침하를 점검한다', '붕괴로 다수 재해가 발생할 수 있다', '이상 징후 시 작업을 중지한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '굴착작업',
+    answers: ['지반 상태와 매설물을 사전 조사한다', '흙막이와 배수 상태를 관리한다', '토사 붕괴와 매몰 위험이 있다', '굴착면 기울기와 지보공을 점검한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '타워크레인',
+    answers: ['풍속, 줄걸이, 신호체계를 확인한다', '설치·해체 순서와 역할을 계획한다', '낙하와 붕괴, 충돌 위험이 있다', '작업반경 출입을 통제한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '중량물 취급',
+    answers: ['하중과 운반 경로를 작업계획서에 반영한다', '추락·낙하·전도·협착 대책을 세운다', '부재 낙하와 끼임 사고가 생길 수 있다', '신호방법과 작업자 위치를 정한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '해체작업',
+    answers: ['구조 상태와 해체 순서를 검토한다', '가설·방호·살수 설비를 계획한다', '예상 밖 붕괴와 낙하 위험이 있다', '상부부터 순서대로 안정성을 확인한다'],
+  },
+  {
+    subjectId: 'construction',
+    chapter: '건설안전 확장',
+    topic: '가설통로',
+    answers: ['견고하고 미끄럼 없는 구조로 설치한다', '경사와 계단참 기준을 확인한다', '전도와 추락, 대피 지연 위험이 있다', '통로 폭과 난간을 확보한다'],
+  },
+];
+
+const expansionQuestionFrames = [
+  '의 핵심 관리 포인트로 가장 적절한 것은?',
+  '에서 우선 확인해야 할 조치로 가장 적절한 것은?',
+  '이 미흡할 때 발생하기 쉬운 위험으로 가장 적절한 것은?',
+  '을 관리하는 방법으로 가장 적절한 것은?',
+] as const;
+
+const expansionQuestions: Question[] = expansionTopics.flatMap((topic, topicIndex) => {
+  const subjectTopicIndex = expansionTopics
+    .slice(0, topicIndex)
+    .filter((candidate) => candidate.subjectId === topic.subjectId).length;
+  const sameSubjectTopics = expansionTopics.filter(
+    (candidate) => candidate.subjectId === topic.subjectId && candidate.topic !== topic.topic,
+  );
+
+  return expansionQuestionFrames.map((frame, frameIndex) => ({
+    id: `${topic.subjectId}-${31 + subjectTopicIndex * expansionQuestionFrames.length + frameIndex}`,
+    subjectId: topic.subjectId,
+    chapter: topic.chapter,
+    prompt: `${topic.topic}${frame}`,
+    choices: [
+      topic.answers[frameIndex],
+      ...sameSubjectTopics.slice(frameIndex, frameIndex + 3).map((candidate) => candidate.answers[frameIndex]),
+    ],
+    answer: 0,
+    explanation: `${topic.topic}은(는) ${topic.answers[frameIndex]}는 점을 중심으로 정리하면 좋습니다.`,
+  }));
+});
+
+const questions: Question[] = [...baseQuestions, ...supplementalQuestions, ...expansionQuestions];
 
 const practicalCards: PracticalCard[] = [
   {
