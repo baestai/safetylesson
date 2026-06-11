@@ -1587,6 +1587,19 @@ function saveStats(nextStats: StudyStats) {
   localStorage.setItem(storageKey, JSON.stringify(nextStats));
 }
 
+function getQuestionSeed(id: string) {
+  return Array.from(id).reduce((seed, char) => seed + char.charCodeAt(0), 0);
+}
+
+function getDisplayChoices(question: Question) {
+  const offset = getQuestionSeed(question.id) % question.choices.length;
+  return question.choices.map((choice, originalIndex) => ({
+    choice,
+    originalIndex,
+    displayIndex: (originalIndex - offset + question.choices.length) % question.choices.length,
+  })).sort((a, b) => a.displayIndex - b.displayIndex);
+}
+
 function getLessonQuestions(subjectId: SubjectId, lessonIndex: number) {
   const pool = questions.filter((question) => question.subjectId === subjectId);
   return Array.from({ length: 10 }, (_, index) => pool[(lessonIndex * 10 + index) % pool.length]);
@@ -1958,13 +1971,13 @@ function App() {
                     <p className="question-kicker">4지선다</p>
                     <h3>{currentQuestion.prompt}</h3>
                     <div className="choice-grid">
-                      {currentQuestion.choices.map((choice, index) => {
+                      {getDisplayChoices(currentQuestion).map(({ choice, originalIndex }, index) => {
                         const showResult = answeredCurrent !== undefined;
                         const choiceClass = [
                           'choice-button',
-                          selectedChoice === index ? 'selected' : '',
-                          showResult && index === currentQuestion.answer ? 'correct' : '',
-                          showResult && selectedChoice === index && index !== currentQuestion.answer ? 'wrong' : '',
+                          selectedChoice === originalIndex ? 'selected' : '',
+                          showResult && originalIndex === currentQuestion.answer ? 'correct' : '',
+                          showResult && selectedChoice === originalIndex && originalIndex !== currentQuestion.answer ? 'wrong' : '',
                         ]
                           .filter(Boolean)
                           .join(' ');
@@ -1974,7 +1987,7 @@ function App() {
                             key={choice}
                             className={choiceClass}
                             disabled={showResult}
-                            onClick={() => submitChoice(index)}
+                            onClick={() => submitChoice(originalIndex)}
                           >
                             <span>{index + 1}</span>
                             {choice}
