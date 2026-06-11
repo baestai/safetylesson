@@ -9,7 +9,8 @@ type SubjectId =
   | 'electric'
   | 'chemical'
   | 'construction'
-  | 'practical';
+  | 'practical'
+  | 'work';
 
 type Question = {
   id: string;
@@ -23,7 +24,7 @@ type Question = {
 
 type PracticalCard = {
   id: string;
-  subjectId: 'practical';
+  subjectId: 'practical' | 'work';
   chapter: string;
   prompt: string;
   recallCount: number;
@@ -31,6 +32,8 @@ type PracticalCard = {
   mnemonic: string;
   answer: string[];
   explanation: string;
+  scene?: string;
+  sceneLabel?: string;
 };
 
 type ReviewItem = Question | PracticalCard;
@@ -104,6 +107,13 @@ const subjects: Subject[] = [
     shortTitle: '실기',
     description: '빈칸, 순서, 키워드 쓰기 중심의 회상 암기',
     color: '#4c6072',
+  },
+  {
+    id: 'work',
+    title: '실기 작업형',
+    shortTitle: '작업',
+    description: '사진 장면을 보고 위험요인과 조치사항을 회상',
+    color: '#8a4f2a',
   },
 ];
 
@@ -899,6 +909,7 @@ const supplementalQuestionCounters: Record<SubjectId, number> = {
   chemical: 11,
   construction: 11,
   practical: 11,
+  work: 11,
 };
 
 const supplementalQuestions: Question[] = supplementalQuestionSeeds.map(
@@ -1248,6 +1259,269 @@ const practicalCards: PracticalCard[] = [
   },
 ];
 
+const workCards: PracticalCard[] = [
+  {
+    id: 'work-card-1',
+    subjectId: 'work',
+    chapter: '사진 판독',
+    scene: 'scaffold',
+    sceneLabel: '비계 작업발판',
+    prompt: '비계 작업발판 사진을 보면 먼저 확인해야 할 설치 기준 2가지를 떠올려 보세요.',
+    recallCount: 2,
+    hint: '폭 40, 틈 3',
+    mnemonic: '발을 디디는 폭은 넓게, 발이 빠질 틈은 작게.',
+    answer: ['비계발판 폭 40cm 이상', '발판 틈새 3cm 이하'],
+    explanation: '작업형 사진에서 비계 발판은 폭, 틈새, 고정, 난간 유무를 가장 먼저 훑어보면 좋습니다.',
+  },
+  {
+    id: 'work-card-2',
+    subjectId: 'work',
+    chapter: '사진 판독',
+    scene: 'pole',
+    sceneLabel: '전주 작업',
+    prompt: '전주에서 작업자가 불안정하게 작업하는 장면의 위험요인 2가지를 말해 보세요.',
+    recallCount: 2,
+    hint: '걸지 않음, 밀고 딛음',
+    mnemonic: '전주는 “걸고, 고정하고, 딛는 곳”을 봅니다.',
+    answer: ['안전대를 전주에 걸지 않음', '발판이 불안정하거나 전주를 밀고 작업함'],
+    explanation: '전주 작업 사진은 추락방지 조치, 발판 상태, 활선 접근과 감전 위험을 함께 확인합니다.',
+  },
+  {
+    id: 'work-card-3',
+    subjectId: 'work',
+    chapter: '밀폐공간',
+    scene: 'confined',
+    sceneLabel: '밀폐공간 구조',
+    prompt: '밀폐공간 사고 구조자가 착용해야 할 호흡용 보호구를 떠올려 보세요.',
+    recallCount: 1,
+    hint: '공기를 밖에서 가져오거나 등에 멥니다.',
+    mnemonic: '밀폐공간 구조는 방진/방독보다 “공기 공급”입니다.',
+    answer: ['송기마스크 또는 공기호흡기'],
+    explanation: '산소결핍이나 유해가스 가능성이 있으면 정화식 마스크가 아니라 공기 공급식 보호구가 핵심입니다.',
+  },
+  {
+    id: 'work-card-4',
+    subjectId: 'work',
+    chapter: '밀폐공간',
+    scene: 'tank',
+    sceneLabel: '탱크 내부 작업',
+    prompt: '탱크·맨홀 내부 작업 시 필요한 비상시 피난용구 4가지를 말해 보세요.',
+    recallCount: 4,
+    hint: '공-송-사-섬',
+    mnemonic: '공기를 마시고, 줄로 연결하고, 사다리로 나와, 섬유로프로 구조합니다.',
+    answer: ['공기호흡기', '송기마스크', '사다리', '섬유로프'],
+    explanation: '사진에 탱크나 좁은 내부 공간이 보이면 환기, 가스측정, 감시인, 피난용구를 한 묶음으로 떠올리세요.',
+  },
+  {
+    id: 'work-card-5',
+    subjectId: 'work',
+    chapter: '보호구',
+    scene: 'asbestos',
+    sceneLabel: '석면 제거',
+    prompt: '천장 석면 제거 작업 사진에서 우려되는 직업병 3가지를 떠올려 보세요.',
+    recallCount: 3,
+    hint: '폐-석-악',
+    mnemonic: '석면은 폐, 석면폐, 악성중피종.',
+    answer: ['폐암', '석면폐증', '악성중피종'],
+    explanation: '석면 작업 장면은 호흡보호구 종류와 질병명을 함께 기억하는 것이 좋습니다.',
+  },
+  {
+    id: 'work-card-6',
+    subjectId: 'work',
+    chapter: '보호구',
+    scene: 'painting',
+    sceneLabel: '스프레이 도장',
+    prompt: '스프레이 도장 작업에서 사용하는 마스크와 흡수제 3가지를 말해 보세요.',
+    recallCount: 4,
+    hint: '방독 + 활큐소',
+    mnemonic: '도장은 유기용제라 방독마스크, 흡수제는 활큐소.',
+    answer: ['방독마스크', '활성탄', '큐프라마이트', '소다라임'],
+    explanation: '도장 사진은 유기용제, 환기, 방독마스크, 피부보호구를 연결해서 봅니다.',
+  },
+  {
+    id: 'work-card-7',
+    subjectId: 'work',
+    chapter: '고열작업',
+    scene: 'heat',
+    sceneLabel: '방열복',
+    prompt: '고열 작업 사진에서 착용한 보호구 3가지와 성능시험 항목 5가지를 떠올려 보세요.',
+    recallCount: 5,
+    hint: '상의/두건/장갑 + 난내인내절',
+    mnemonic: '방열복은 열과 불, 인장, 절연을 버티는지 봅니다.',
+    answer: ['방열복', '방열두건', '방열장갑', '난연성시험', '내열성시험', '내한성시험', '인장강도시험', '절연저항시험'],
+    explanation: '보호구 사진형 문제는 보호구 명칭과 성능시험 항목이 같이 나오는 경우가 많습니다.',
+  },
+  {
+    id: 'work-card-8',
+    subjectId: 'work',
+    chapter: '양중기',
+    scene: 'lift',
+    sceneLabel: '리프트',
+    prompt: '건설용 리프트 사진에서 작업시작 전 점검사항 2가지와 방호장치 4가지를 떠올려 보세요.',
+    recallCount: 6,
+    hint: '점검: 방브클/와이어, 방호: 권과-과부하-제동-비상',
+    mnemonic: '리프트는 올리고 멈추고 넘치지 않게 막는 장치가 핵심입니다.',
+    answer: ['방호장치·브레이크·클러치 기능 상태', '와이어로프 통과 부분 상태', '권과방지장치', '과부하방지장치', '제동장치', '비상정지장치'],
+    explanation: '승강 장비 장면은 와이어로프와 정지장치, 과부하와 권과방지장치를 묶어서 봅니다.',
+  },
+  {
+    id: 'work-card-9',
+    subjectId: 'work',
+    chapter: '크레인',
+    scene: 'crane',
+    sceneLabel: '이동식 크레인',
+    prompt: '크레인과 고소작업대가 전선 가까이 있는 사진의 핵심 위험 3가지를 말해 보세요.',
+    recallCount: 3,
+    hint: '감전-불안전 탑승-신호',
+    mnemonic: '전선 옆 크레인은 감전, 자세, 신호를 순서대로 봅니다.',
+    answer: ['전선 접촉에 의한 감전 위험', '작업자의 불안정한 자세', '신호전달 불량'],
+    explanation: '전기와 양중 작업이 함께 보이면 감전, 추락, 협착, 신호수 배치를 함께 판단합니다.',
+  },
+  {
+    id: 'work-card-10',
+    subjectId: 'work',
+    chapter: '운반기계',
+    scene: 'forklift',
+    sceneLabel: '지게차',
+    prompt: '지게차 사진에서 안전도 기준 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '하역 4/6, 주행 18, 좌우 15+1.1V',
+    mnemonic: '지게차 안정도는 하역과 주행을 나눠 숫자로 외웁니다.',
+    answer: ['하역작업 시 전후안정도 4%', '하역작업 시 좌우안정도 6%', '주행 시 전후안정도 18%', '주행 시 좌우안정도 (15+1.1V)%'],
+    explanation: '지게차 사진은 포크 높이, 하중, 전도 위험과 함께 안정도 숫자가 자주 연결됩니다.',
+  },
+  {
+    id: 'work-card-11',
+    subjectId: 'work',
+    chapter: '운반기계',
+    scene: 'pump',
+    sceneLabel: '양수기',
+    prompt: '양수기 운전 중 점검 장면의 위험요인 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '정지 안 함, 운전 중 작업, 회전체 장갑',
+    mnemonic: '회전체는 멈추고, 손 빼고, 장갑 말림을 조심합니다.',
+    answer: ['작업 전 점검을 하지 않아 사고 위험', '운전 중 작업하여 사고 위험', '회전기계에 장갑이 말려 들어갈 위험'],
+    explanation: '회전 기계 장면은 전원 차단, 운전 정지, 장갑·헐거운 옷 말림 위험을 바로 떠올리세요.',
+  },
+  {
+    id: 'work-card-12',
+    subjectId: 'work',
+    chapter: '화재폭발',
+    scene: 'charging',
+    sceneLabel: '축전지 충전',
+    prompt: '지게차 배터리 충전 중 흡연 장면의 위험요인과 재해형태를 떠올려 보세요.',
+    recallCount: 3,
+    hint: '수소 + 흡연 + 나화',
+    mnemonic: '충전 중 수소, 담배는 점화원, 형태는 나화.',
+    answer: ['인화성 가스가 있는 장소에서 흡연', '스파크·정전기와 유증기 접촉에 의한 화재폭발 위험', '재해형태: 나화'],
+    explanation: '충전, 가스, 흡연이 같이 보이면 수소 발생과 점화원 관리가 핵심입니다.',
+  },
+  {
+    id: 'work-card-13',
+    subjectId: 'work',
+    chapter: '감전',
+    scene: 'electric-shock',
+    sceneLabel: '감전',
+    prompt: '감전 사고 그림을 보고 예방대책 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '접지-보호구-절연-누전',
+    mnemonic: '전기는 땅으로 보내고, 몸은 보호하고, 선은 절연하고, 차단기로 끊습니다.',
+    answer: ['접지작업 실시', '감전 대비 보호구 착용', '이동전선 절연조치', '정격 누전차단기 설치'],
+    explanation: '감전 사진은 접지, 절연, 누전차단, 보호구를 한 세트로 외우면 안정적입니다.',
+  },
+  {
+    id: 'work-card-14',
+    subjectId: 'work',
+    chapter: '전기작업',
+    scene: 'cutout',
+    sceneLabel: '전기공사',
+    prompt: '전기공사 사진에서 정전작업 중 조치사항 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: '흡연 금지, COS 금지, 안전모, 발판',
+    mnemonic: '전기작업은 금지할 것과 착용·고정할 것을 나눕니다.',
+    answer: ['작업 중 흡연 금지', 'Cut Out Switch에 임시로 걸쳐놓지 않음', '작업발판에 안전하게 서서 작업', '작업발판에 안전장치 설치'],
+    explanation: '전기 작업형 장면에서는 정전 확인, 잠금표시, 발판 안정, 활선 접근 여부를 같이 봅니다.',
+  },
+  {
+    id: 'work-card-15',
+    subjectId: 'work',
+    chapter: '정전작업',
+    scene: 'lockout',
+    sceneLabel: '정전작업',
+    prompt: '정전작업 시작 전 조치사항 4가지를 순서감 있게 떠올려 보세요.',
+    recallCount: 4,
+    hint: '전압 파악-차단-잠금표지-검전',
+    mnemonic: '알고, 끊고, 잠그고, 없는지 확인합니다.',
+    answer: ['관련 도면과 배선도로 인가 전압 파악', '전원을 차단한 후 단로기 등을 개방', '차단장치에 잠금장치와 꼬리표 부착', '검전기로 충전 여부 확인'],
+    explanation: '정전작업은 순서형으로 외워두면 사진형, 서술형 모두 대응할 수 있습니다.',
+  },
+  {
+    id: 'work-card-16',
+    subjectId: 'work',
+    chapter: '롤러기',
+    scene: 'roller',
+    sceneLabel: '인쇄용 윤전기',
+    prompt: '회전 롤러에 손이 말릴 수 있는 장면의 위험점과 핵심 예방대책 3가지를 써 보세요.',
+    recallCount: 4,
+    hint: '물림점 + 정지/장갑금지/가드',
+    mnemonic: '두 회전체 사이는 물림점, 손을 넣기 전 멈춤.',
+    answer: ['위험점: 물림점', '회전 중 손을 넣지 않음', '전원 차단 후 작업', '덮개 또는 울 설치'],
+    explanation: '롤러·윤전기 사진은 물림점, 장갑 말림, 전원 차단, 방호덮개를 먼저 확인하세요.',
+  },
+  {
+    id: 'work-card-17',
+    subjectId: 'work',
+    chapter: '연삭기',
+    scene: 'grinder',
+    sceneLabel: '탁상용 연삭기',
+    prompt: '탁상용 연삭기 사진에서 덮개의 노출 각도를 떠올려 보세요.',
+    recallCount: 3,
+    hint: '총 90, 수평 위 65, 작업면 125',
+    mnemonic: '연삭기 각도는 90-65-125로 묶어 외웁니다.',
+    answer: ['덮개 최대 노출 각도 90도 이내', '숫돌 주축에서 수평면 위쪽 원주각도 65도 이내', '수평면 이하 부분에서 연삭 시 최대 125도까지 가능'],
+    explanation: '연삭기 사진은 덮개, 워크레스트, 조정편, 시운전 시간과 같이 묶어 암기하세요.',
+  },
+  {
+    id: 'work-card-18',
+    subjectId: 'work',
+    chapter: '건설안전',
+    scene: 'fall-panel',
+    sceneLabel: '작업발판 운반',
+    prompt: '작업발판을 들고 이동하다 추락한 장면의 원인 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '난간-안전대-망',
+    mnemonic: '높은 곳 이동은 난간, 안전대, 추락방호망을 봅니다.',
+    answer: ['안전난간 미설치', '안전대 미착용', '추락방호망 미설치'],
+    explanation: '추락 장면은 원인을 안전난간, 안전대, 발판, 추락방호망 순서로 확인하면 빠릅니다.',
+  },
+  {
+    id: 'work-card-19',
+    subjectId: 'work',
+    chapter: '터널작업',
+    scene: 'tunnel',
+    sceneLabel: '터널 굴착',
+    prompt: '터널 공사 사진에서 필요한 계측 종류 4가지를 말해 보세요.',
+    recallCount: 4,
+    hint: '내-천-지-록',
+    mnemonic: '터널은 안쪽 변위, 천장 침하, 지중 변위, 록볼트 축력을 봅니다.',
+    answer: ['내공변위측정', '천단침하측정', '지중변위측정', '록볼트 축력 측정'],
+    explanation: '터널 장면은 낙반 위험과 함께 계측 항목이 자주 묶입니다.',
+  },
+  {
+    id: 'work-card-20',
+    subjectId: 'work',
+    chapter: '낙하물',
+    scene: 'falling-object',
+    sceneLabel: '낙하',
+    prompt: '물건이 떨어져 작업자가 맞는 장면의 재해발생 형태와 정의를 써 보세요.',
+    recallCount: 2,
+    hint: '낙하 = 물건이 주체',
+    mnemonic: '사람이 떨어지면 추락, 물건이 떨어져 맞으면 낙하.',
+    answer: ['재해형태: 낙하', '물건이 주체가 되어 사람이 맞은 경우'],
+    explanation: '작업형에서는 추락, 낙하, 전도, 협착처럼 재해형태의 주체를 구분하는 연습이 중요합니다.',
+  },
+];
+
 const badgeLabels: Record<BadgeId, string> = {
   firstLesson: '첫 레슨 완료',
   perfectLesson: '만점 레슨',
@@ -1322,6 +1596,14 @@ function getPracticalLessonCards(lessonIndex: number) {
   return Array.from({ length: 10 }, (_, index) => practicalCards[(lessonIndex * 10 + index) % practicalCards.length]);
 }
 
+function getWorkLessonCards(lessonIndex: number) {
+  return Array.from({ length: 10 }, (_, index) => workCards[(lessonIndex * 10 + index) % workCards.length]);
+}
+
+function isRecallItem(item: ReviewItem): item is PracticalCard {
+  return item.subjectId === 'practical' || item.subjectId === 'work';
+}
+
 function getLevel(xp: number) {
   return Math.floor(xp / 120) + 1;
 }
@@ -1347,25 +1629,29 @@ function App() {
   const [showPracticalAnswer, setShowPracticalAnswer] = useState(false);
 
   const activeSubject = subjects.find((subject) => subject.id === activeSubjectId) ?? subjects[0];
-  const isPracticalMode = activeSubjectId === 'practical';
+  const isRecallMode = activeSubjectId === 'practical' || activeSubjectId === 'work';
+  const isWorkMode = activeSubjectId === 'work';
   const lessonQuestions = useMemo(
     () => getLessonQuestions(activeSubjectId, lessonIndex),
     [activeSubjectId, lessonIndex],
   );
   const practicalLessonCards = useMemo(() => getPracticalLessonCards(lessonIndex), [lessonIndex]);
-  const activeLessonItems: ReviewItem[] = isPracticalMode ? practicalLessonCards : lessonQuestions;
+  const workLessonCards = useMemo(() => getWorkLessonCards(lessonIndex), [lessonIndex]);
+  const recallLessonCards = isWorkMode ? workLessonCards : practicalLessonCards;
+  const activeLessonItems: ReviewItem[] = isRecallMode ? recallLessonCards : lessonQuestions;
   const currentQuestion = lessonQuestions[questionIndex];
-  const currentPracticalCard = practicalLessonCards[questionIndex];
+  const currentPracticalCard = recallLessonCards[questionIndex];
   const currentItem = activeLessonItems[questionIndex];
   const answeredCurrent = currentItem ? answers[currentItem.id] : undefined;
-  const isCorrect = isPracticalMode ? answeredCurrent === 1 : answeredCurrent === currentQuestion?.answer;
+  const isCorrect = isRecallMode ? answeredCurrent === 1 : answeredCurrent === currentQuestion?.answer;
   const answeredCount = Object.keys(answers).length;
   const score = activeLessonItems.filter((item) =>
-    item.subjectId === 'practical' ? answers[item.id] === 1 : answers[item.id] === item.answer,
+    isRecallItem(item) ? answers[item.id] === 1 : answers[item.id] === item.answer,
   ).length;
   const wrongQuestions = questions.filter((question) => stats.wrongIds.includes(question.id));
   const wrongPracticalCards = practicalCards.filter((card) => stats.wrongIds.includes(card.id));
-  const wrongItems: ReviewItem[] = [...wrongQuestions, ...wrongPracticalCards];
+  const wrongWorkCards = workCards.filter((card) => stats.wrongIds.includes(card.id));
+  const wrongItems: ReviewItem[] = [...wrongQuestions, ...wrongPracticalCards, ...wrongWorkCards];
   const weakestSubject = subjects
     .map((subject) => {
       const attempt = stats.subjectAttempts[subject.id];
@@ -1424,10 +1710,10 @@ function App() {
     const nextStreak =
       stats.lastStudyDate === today ? stats.streak : stats.lastStudyDate === yesterday ? stats.streak + 1 : 1;
     const wrongIdsInLesson = activeLessonItems
-      .filter((item) => (item.subjectId === 'practical' ? answers[item.id] !== 1 : answers[item.id] !== item.answer))
+      .filter((item) => (isRecallItem(item) ? answers[item.id] !== 1 : answers[item.id] !== item.answer))
       .map((item) => item.id);
     const correctedIds = activeLessonItems
-      .filter((item) => (item.subjectId === 'practical' ? answers[item.id] === 1 : answers[item.id] === item.answer))
+      .filter((item) => (isRecallItem(item) ? answers[item.id] === 1 : answers[item.id] === item.answer))
       .map((item) => item.id);
     const nextWrongIds = uniqueList([...stats.wrongIds, ...wrongIdsInLesson]).filter(
       (id) => !correctedIds.includes(id) || wrongIdsInLesson.includes(id),
@@ -1440,7 +1726,7 @@ function App() {
         total: current.total + 1,
         correct:
           current.correct +
-          (item.subjectId === 'practical'
+          (isRecallItem(item)
             ? answers[item.id] === 1
               ? 1
               : 0
@@ -1516,7 +1802,7 @@ function App() {
           <p className="eyebrow">산업안전기사 러닝 패스</p>
           <h1>오늘도 10문제로 안전 점수를 올려요</h1>
           <p className="lead">
-            필기는 기출형 4지선다로, 실기는 회상 카드로 짧게 반복하고 오답과 약한 과목은 자동으로 다시 학습합니다.
+            필기는 기출형 4지선다로, 필답형과 작업형은 회상 카드로 짧게 반복하고 오답과 약한 과목은 자동으로 다시 학습합니다.
           </p>
         </div>
         <div className="profile-card" aria-label="학습 상태">
@@ -1576,7 +1862,7 @@ function App() {
                 <h2>챕터 {lessonIndex + 1}. {currentItem.chapter}</h2>
               </div>
               <div className="lesson-stats">
-                <span>{isPracticalMode ? `회상 ${score}/10` : `하트 ${getHearts(answeredCount, score)}/10`}</span>
+                <span>{isRecallMode ? `회상 ${score}/10` : `하트 ${getHearts(answeredCount, score)}/10`}</span>
                 <span>{questionIndex + 1}/10</span>
               </div>
             </div>
@@ -1587,14 +1873,35 @@ function App() {
 
             {!lessonDone ? (
               <article className="question-card">
-                {isPracticalMode ? (
+                {isRecallMode ? (
                   <>
-                    <p className="question-kicker">필답형 회상 카드 · {currentPracticalCard.recallCount}개 쓰기</p>
+                    <p className="question-kicker">
+                      {isWorkMode ? '작업형 장면 카드' : '필답형 회상 카드'} · {currentPracticalCard.recallCount}개 쓰기
+                    </p>
+                    {isWorkMode && currentPracticalCard.scene && (
+                      <div
+                        className={`scene-card scene-${currentPracticalCard.scene}`}
+                        aria-label={currentPracticalCard.sceneLabel}
+                      >
+                        <div className="scene-sky" />
+                        <div className="scene-ground" />
+                        <div className="scene-frame">
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                        <div className="scene-worker">
+                          <span />
+                        </div>
+                        <div className="scene-tool" />
+                        <strong>{currentPracticalCard.sceneLabel}</strong>
+                      </div>
+                    )}
                     <h3>{currentPracticalCard.prompt}</h3>
-                    <div className="recall-pad" aria-label="필답형 암기 영역">
+                    <div className="recall-pad" aria-label={isWorkMode ? '작업형 암기 영역' : '필답형 암기 영역'}>
                       <div>
                         <span>1</span>
-                        머릿속이나 종이에 먼저 답을 써 보세요.
+                        {isWorkMode ? '사진을 훑듯 장면 속 위험 단서를 먼저 찾아보세요.' : '머릿속이나 종이에 먼저 답을 써 보세요.'}
                       </div>
                       <div>
                         <span>2</span>
@@ -1692,7 +1999,7 @@ function App() {
                   >
                     다시 시작
                   </button>
-                  {isPracticalMode && answeredCurrent === undefined ? (
+                  {isRecallMode && answeredCurrent === undefined ? (
                     <>
                       <button className="secondary-button" onClick={() => submitPracticalResult(false)}>
                         다시 볼래요
@@ -1711,9 +2018,9 @@ function App() {
             ) : (
               <article className="result-card">
                 <p className="eyebrow">레슨 완료</p>
-                <h3>{score}/10 {isPracticalMode ? '회상' : '정답'}</h3>
+                <h3>{score}/10 {isRecallMode ? '회상' : '정답'}</h3>
                 <p>
-                  XP {score * 12 + 20}점을 획득했습니다. {isPracticalMode ? '다시 보기를 선택한 카드는' : '틀린 문제는'} 오답노트에 저장되고 다음 복습에 다시 등장합니다.
+                  XP {score * 12 + 20}점을 획득했습니다. {isRecallMode ? '다시 보기를 선택한 카드는' : '틀린 문제는'} 오답노트에 저장되고 다음 복습에 다시 등장합니다.
                 </p>
                 <div className="result-actions">
                   <button className="secondary-button" onClick={() => setActiveTab('analytics')}>
