@@ -21,6 +21,20 @@ type Question = {
   explanation: string;
 };
 
+type PracticalCard = {
+  id: string;
+  subjectId: 'practical';
+  chapter: string;
+  prompt: string;
+  recallCount: number;
+  hint: string;
+  mnemonic: string;
+  answer: string[];
+  explanation: string;
+};
+
+type ReviewItem = Question | PracticalCard;
+
 type Subject = {
   id: SubjectId;
   title: string;
@@ -88,7 +102,7 @@ const subjects: Subject[] = [
     id: 'practical',
     title: '실기 필답형',
     shortTitle: '실기',
-    description: '서술형 대비를 위한 핵심 개념 객관식 점검',
+    description: '빈칸, 순서, 키워드 쓰기 중심의 회상 암기',
     color: '#4c6072',
   },
 ];
@@ -901,6 +915,339 @@ const supplementalQuestions: Question[] = supplementalQuestionSeeds.map(
 
 const questions: Question[] = [...baseQuestions, ...supplementalQuestions];
 
+const practicalCards: PracticalCard[] = [
+  {
+    id: 'practical-card-1',
+    subjectId: 'practical',
+    chapter: '안전관리 암기',
+    prompt: '위험예지훈련 4라운드를 순서대로 떠올려 보세요.',
+    recallCount: 4,
+    hint: '현-본-대-목',
+    mnemonic: '현장을 보고, 본질을 찾고, 대책을 세운 뒤 목표로 잠급니다.',
+    answer: ['현상파악', '본질추구', '대책수립', '목표설정'],
+    explanation: '순서형 문제는 첫 글자를 붙여 하나의 짧은 문장처럼 외우면 오래 갑니다.',
+  },
+  {
+    id: 'practical-card-2',
+    subjectId: 'practical',
+    chapter: '안전관리 암기',
+    prompt: '재해예방 4원칙을 써 보세요.',
+    recallCount: 4,
+    hint: '예-대-손-원',
+    mnemonic: '예방할 수 있고, 대책은 있으며, 손실은 우연, 원인은 반드시 있다.',
+    answer: ['예방가능의 원칙', '대책선정의 원칙', '손실우연의 원칙', '원인계기의 원칙'],
+    explanation: '필답형에서는 명칭과 간단한 설명을 함께 떠올릴 수 있어야 합니다.',
+  },
+  {
+    id: 'practical-card-3',
+    subjectId: 'practical',
+    chapter: '안전관리 암기',
+    prompt: '산업안전보건법상 중대재해 판단 기준 3가지를 떠올려 보세요.',
+    recallCount: 3,
+    hint: '사망 1, 3개월 2, 부상/질병 10',
+    mnemonic: '1-2-10 숫자 뼈대를 먼저 외웁니다.',
+    answer: ['사망자 1명 이상', '3개월 이상 요양 부상자 동시 2명 이상', '부상자 또는 직업성 질병자 동시 10명 이상'],
+    explanation: '숫자 기준은 문장보다 숫자 뼈대를 먼저 고정하면 헷갈림이 줄어듭니다.',
+  },
+  {
+    id: 'practical-card-4',
+    subjectId: 'practical',
+    chapter: '안전관리 암기',
+    prompt: '재해 발생 시 조치 순서를 순서대로 써 보세요.',
+    recallCount: 8,
+    hint: '발-긴-조-원-대-계-실-평',
+    mnemonic: '발생하면 긴급히 조사하고, 원인과 대책을 세워 실시 후 평가합니다.',
+    answer: ['산업재해 발생', '긴급처리', '재해조사', '원인강구', '대책수립', '대책실시계획', '실시', '평가'],
+    explanation: '긴 순서는 두 글자 축약어를 먼저 암기한 뒤 전체 용어로 복원하는 방식이 좋습니다.',
+  },
+  {
+    id: 'practical-card-5',
+    subjectId: 'practical',
+    chapter: '안전관리 암기',
+    prompt: '하인리히의 재해예방 5단계를 순서대로 떠올려 보세요.',
+    recallCount: 5,
+    hint: '조-사-분-선-적',
+    mnemonic: '조직을 만들고, 사실을 찾아 분석하고, 시정책을 골라 적용합니다.',
+    answer: ['안전관리조직', '사실의 발견', '분석', '시정책의 선정', '시정책의 적용'],
+    explanation: '단계형 문제는 순서가 점수입니다. 첫 글자와 동작 흐름을 함께 외우세요.',
+  },
+  {
+    id: 'practical-card-6',
+    subjectId: 'practical',
+    chapter: '위험성평가',
+    prompt: '위험성평가 실시 순서를 순서대로 떠올려 보세요.',
+    recallCount: 6,
+    hint: '사-파-추-결-대-기',
+    mnemonic: '사전에 준비하고, 파악-추정-결정 뒤 대책과 기록으로 끝냅니다.',
+    answer: ['사전준비', '유해위험요인 파악', '위험성 추정', '위험성 결정', '감소대책 수립 및 실행', '기록'],
+    explanation: '위험성평가는 대부분 순서형 또는 빈칸형으로 나오므로 축약어가 특히 유용합니다.',
+  },
+  {
+    id: 'practical-card-7',
+    subjectId: 'practical',
+    chapter: '시스템안전',
+    prompt: '위험성평가기법 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: 'F-E-C-H 또는 P도 자주 함께 확인',
+    mnemonic: '고장나무 FTA, 사건나무 ETA, 원인결과 CCA, 운전분석 HAZOP.',
+    answer: ['FTA', 'ETA', 'CCA', 'HAZOP'],
+    explanation: '영문 약어는 풀네임보다 쓰임새와 함께 묶어 암기하면 문제 문장에 잘 반응합니다.',
+  },
+  {
+    id: 'practical-card-8',
+    subjectId: 'practical',
+    chapter: '시스템안전',
+    prompt: 'FTA 작성 단계를 순서대로 써 보세요.',
+    recallCount: 4,
+    hint: 'TOP-원인-도-개선',
+    mnemonic: '정상사상을 정하고, 원인을 규명하고, FT도를 그린 뒤 개선합니다.',
+    answer: ['TOP 사상 선정', '재해원인 규명', 'FT도 작성', '개선계획 수립'],
+    explanation: 'FTA는 분석 대상인 TOP 사상을 먼저 정하는 점을 놓치지 않는 것이 핵심입니다.',
+  },
+  {
+    id: 'practical-card-9',
+    subjectId: 'practical',
+    chapter: '인간공학',
+    prompt: '인간-기계 통합시스템의 기능 5가지를 떠올려 보세요.',
+    recallCount: 5,
+    hint: '감-보-처-결-행',
+    mnemonic: '감지하고, 보관하고, 처리하고, 결정하고, 행동합니다.',
+    answer: ['감지기능', '정보보관기능', '정보처리기능', '의사결정기능', '행동기능'],
+    explanation: '기능형 문제는 사람이 정보를 다루는 흐름으로 연결하면 자연스럽게 복원됩니다.',
+  },
+  {
+    id: 'practical-card-10',
+    subjectId: 'practical',
+    chapter: '인간공학',
+    prompt: '주의의 특성 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '선-변-방',
+    mnemonic: '주의는 선택되고, 흔들리고, 방향을 가집니다.',
+    answer: ['선택성', '변동성', '방향성'],
+    explanation: '짧은 3요소 암기는 각 단어의 뜻을 한 문장으로 설명할 수 있을 때 완성됩니다.',
+  },
+  {
+    id: 'practical-card-11',
+    subjectId: 'practical',
+    chapter: '인간공학',
+    prompt: '양립성의 종류를 4가지 떠올려 보세요.',
+    recallCount: 4,
+    hint: '공-운-개-양',
+    mnemonic: '공간은 위치, 운동은 방향, 개념은 의미, 양식은 표현 방식입니다.',
+    answer: ['공간 양립성', '운동 양립성', '개념 양립성', '양식 양립성'],
+    explanation: '양립성은 예시와 함께 외우면 객관식과 필답형 모두 대응하기 좋습니다.',
+  },
+  {
+    id: 'practical-card-12',
+    subjectId: 'practical',
+    chapter: '보호구',
+    prompt: '작업환경 개선의 기본 원칙 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '대-격-환',
+    mnemonic: '위험한 것은 대치하고, 떨어뜨려 격리하고, 공기로 환기합니다.',
+    answer: ['대치', '격리', '환기'],
+    explanation: '유해 작업 개선 원칙은 보호구보다 앞선 공학적 개선 개념으로 묶어두세요.',
+  },
+  {
+    id: 'practical-card-13',
+    subjectId: 'practical',
+    chapter: '보호구',
+    prompt: '안전모 성능시험 항목 5가지를 떠올려 보세요.',
+    recallCount: 5,
+    hint: '관-전-수-충-난',
+    mnemonic: '뚫림, 전기, 물, 충격, 불에 견디는지 확인합니다.',
+    answer: ['내관통성', '내전압성', '내수성', '충격흡수성', '난연성'],
+    explanation: '성능시험 항목은 한자어가 비슷하니 시험 장면을 이미지로 떠올리면 좋습니다.',
+  },
+  {
+    id: 'practical-card-14',
+    subjectId: 'practical',
+    chapter: '보호구',
+    prompt: '차광보안경의 사용 구분 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: '자-적-복-용',
+    mnemonic: '자외선, 적외선, 복합, 용접 순서로 한 묶음입니다.',
+    answer: ['자외선용', '적외선용', '복합용', '용접용'],
+    explanation: '보호구 종류는 “무엇으로부터 보호하는가”를 붙여 외우면 회상이 쉬워집니다.',
+  },
+  {
+    id: 'practical-card-15',
+    subjectId: 'practical',
+    chapter: '화학안전',
+    prompt: 'MSDS 근로자 교육내용 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '명-위-취-보-응',
+    mnemonic: '물질명, 위험성, 취급, 보호구, 응급조치를 한 줄로 외웁니다.',
+    answer: ['대상화학물질의 명칭', '물리적 위험성 및 건강 유해성', '취급상의 주의사항', '적절한 보호구', '응급조치 요령 및 사고 시 대처방법'],
+    explanation: '문제에서 4가지를 요구해도 5개를 준비하면 일부가 기억나지 않아도 답안을 채울 수 있습니다.',
+  },
+  {
+    id: 'practical-card-16',
+    subjectId: 'practical',
+    chapter: '화학안전',
+    prompt: '관리대상 유해물질 작업장 게시사항 5가지를 써 보세요.',
+    recallCount: 5,
+    hint: '명-영-취-보-응',
+    mnemonic: '명칭, 영향, 취급, 보호구, 응급조치입니다.',
+    answer: ['관리대상 유해물질의 명칭', '인체에 미치는 영향', '취급상 주의사항', '착용하여야 할 보호구', '응급조치와 긴급 방재요령'],
+    explanation: '게시사항 문제는 작업자가 현장에서 바로 알아야 할 정보라는 관점으로 묶으면 쉽습니다.',
+  },
+  {
+    id: 'practical-card-17',
+    subjectId: 'practical',
+    chapter: '교육·법규',
+    prompt: '사업주가 근로자에게 실시하는 안전보건교육 종류 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: '채-정-특-변',
+    mnemonic: '채용되면 정기적으로, 특별작업과 변경작업 때 교육합니다.',
+    answer: ['채용 시 교육', '정기교육', '특별교육', '작업내용 변경 시 교육'],
+    explanation: '교육 종류는 언제 교육이 필요한지 상황과 함께 외우면 헷갈리지 않습니다.',
+  },
+  {
+    id: 'practical-card-18',
+    subjectId: 'practical',
+    chapter: '교육·법규',
+    prompt: '관리감독자의 업무 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '점-보-재-정',
+    mnemonic: '설비를 점검하고, 보호구를 지도하고, 재해에 조치하고, 정리정돈을 확인합니다.',
+    answer: ['기계기구 또는 설비의 안전보건 점검', '작업복·보호구·방호장치 점검과 교육지도', '산업재해 보고 및 응급조치', '작업장 정리정돈 및 통로확보 확인'],
+    explanation: '관리감독자는 현장 바로 위 관리자라고 생각하면 업무 범위가 선명해집니다.',
+  },
+  {
+    id: 'practical-card-19',
+    subjectId: 'practical',
+    chapter: '교육·법규',
+    prompt: '산업안전보건위원회 회의록 작성사항 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '일-출-심',
+    mnemonic: '언제 어디서, 누가 나왔고, 무엇을 결정했는지 남깁니다.',
+    answer: ['개최 일시 및 장소', '출석위원', '심의 내용 및 의결·결정사항'],
+    explanation: '회의록 문제는 기록 문서의 기본 구성으로 생각하면 쉽게 복원됩니다.',
+  },
+  {
+    id: 'practical-card-20',
+    subjectId: 'practical',
+    chapter: '건설안전',
+    prompt: '지반 굴착작업 사전조사항목 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '지-매-형-균',
+    mnemonic: '지하수, 매설물, 형상·지질, 균열·함수 상태를 봅니다.',
+    answer: ['지하수위 상태', '매설물 등의 유무 또는 상태', '형상·지질 및 지층 상태', '균열·함수·용수 및 동결의 유무 또는 상태'],
+    explanation: '굴착은 땅속 정보가 사고를 좌우하므로 사전조사 항목을 묶어 외우세요.',
+  },
+  {
+    id: 'practical-card-21',
+    subjectId: 'practical',
+    chapter: '건설안전',
+    prompt: '타워크레인 설치·조립·해체 작업계획서 내용 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: '종-순-인-장-지',
+    mnemonic: '크레인의 종류, 순서, 인원, 장비, 지지방법을 계획합니다.',
+    answer: ['타워크레인의 종류 및 형식', '설치·조립 및 해체 순서', '작업인원 구성과 역할범위', '작업도구·장비·가설설비 및 방호설비', '타워크레인 지지방법'],
+    explanation: '계획서 문제는 “무엇을, 어떤 순서로, 누가, 어떤 장비로, 어떻게 지지할지”로 기억하세요.',
+  },
+  {
+    id: 'practical-card-22',
+    subjectId: 'practical',
+    chapter: '건설안전',
+    prompt: '중량물 작업계획서의 위험 예방대책 5가지를 떠올려 보세요.',
+    recallCount: 5,
+    hint: '추-낙-전-협-붕',
+    mnemonic: '중량물은 추락, 낙하, 전도, 협착, 붕괴를 조심합니다.',
+    answer: ['추락위험 예방대책', '낙하위험 예방대책', '전도위험 예방대책', '협착위험 예방대책', '붕괴위험 예방대책'],
+    explanation: '중량물은 사고 형태를 한 번에 묶어 외우면 계획서 내용으로 바로 확장됩니다.',
+  },
+  {
+    id: 'practical-card-23',
+    subjectId: 'practical',
+    chapter: '기계안전',
+    prompt: '크레인 작업 전 점검사항 3가지를 써 보세요.',
+    recallCount: 3,
+    hint: '장치-레일-로프',
+    mnemonic: '권과와 제동 장치, 레일 상태, 와이어로프 통로를 봅니다.',
+    answer: ['권과방지장치·브레이크·클러치 및 운전장치 기능', '주행로와 횡행 레일 상태', '와이어로프가 통하고 있는 곳의 상태'],
+    explanation: '작업 전 점검은 “장치가 작동하는가, 길이 안전한가, 줄이 안전한가”로 압축하세요.',
+  },
+  {
+    id: 'practical-card-24',
+    subjectId: 'practical',
+    chapter: '기계안전',
+    prompt: '지게차 작업 전 점검사항 4가지를 떠올려 보세요.',
+    recallCount: 4,
+    hint: '제-하-바-등',
+    mnemonic: '제동·조종, 하역·유압, 바퀴, 등화·경보를 봅니다.',
+    answer: ['제동장치 및 조종장치 기능', '하역장치 및 유압장치 기능', '바퀴의 이상 유무', '전조등·후미등·방향지시기 및 경보장치 기능'],
+    explanation: '지게차는 움직임, 들어올림, 접지, 알림 기능으로 나눠 외우면 빠릅니다.',
+  },
+  {
+    id: 'practical-card-25',
+    subjectId: 'practical',
+    chapter: '기계안전',
+    prompt: '대표 기계별 방호장치를 연결해 보세요.',
+    recallCount: 5,
+    hint: '롤-로봇-용접-압력-연삭',
+    mnemonic: '롤러는 급정지, 로봇은 매트, 용접은 안전기, 압력은 방출, 연삭은 덮개.',
+    answer: ['롤러기: 급정지장치', '산업용 로봇: 안전매트', '아세틸렌 용접장치: 안전기', '압력용기: 압력방출장치', '연삭기: 덮개'],
+    explanation: '연결형 문제는 왼쪽 기계명만 보고 오른쪽 장치를 말하는 식으로 반복하세요.',
+  },
+  {
+    id: 'practical-card-26',
+    subjectId: 'practical',
+    chapter: '기계안전',
+    prompt: '와이어로프 사용금지 기준 4가지를 써 보세요.',
+    recallCount: 4,
+    hint: '이-꼬-지름-소선',
+    mnemonic: '이음매, 꼬임, 지름 감소, 소선 절단을 확인합니다.',
+    answer: ['이음매가 있는 것', '꼬인 것', '지름 감소가 공칭지름의 7%를 초과한 것', '한 꼬임에서 끊어진 소선 수가 10% 이상인 것'],
+    explanation: '수치가 있는 항목은 7%와 10%를 따로 크게 표시해 외우면 좋습니다.',
+  },
+  {
+    id: 'practical-card-27',
+    subjectId: 'practical',
+    chapter: '기계안전',
+    prompt: '연삭숫돌 시운전 시간을 떠올려 보세요.',
+    recallCount: 2,
+    hint: '작업 전 1, 교체 후 3',
+    mnemonic: '평소 1분, 바꾸면 3분.',
+    answer: ['작업 전 1분 이상', '숫돌 교체 후 3분 이상'],
+    explanation: '숫자형 빈칸은 짧은 리듬으로 반복하는 것이 가장 효과적입니다.',
+  },
+  {
+    id: 'practical-card-28',
+    subjectId: 'practical',
+    chapter: '화학·전기',
+    prompt: '정전기 방지의 일반적인 대책 5가지를 떠올려 보세요.',
+    recallCount: 5,
+    hint: '가-제-차-방-도-접',
+    mnemonic: '가습하고, 제전기를 쓰고, 차폐·방지제를 쓰며, 도전재와 접지를 활용합니다.',
+    answer: ['가습', '제전기 사용', '대전물질의 차폐', '대전방지제 사용', '도전성 재료 사용', '도체 접지 및 부도체 사용 제한'],
+    explanation: '요구 개수보다 한두 개 더 외우면 실제 시험장에서 답안 선택지가 넓어집니다.',
+  },
+  {
+    id: 'practical-card-29',
+    subjectId: 'practical',
+    chapter: '화학·전기',
+    prompt: '충전전로 접근한계거리 대표 값을 떠올려 보세요.',
+    recallCount: 4,
+    hint: '380-30, 1.5-45, 6.6-60, 22.9-90',
+    mnemonic: '전압이 커질수록 30, 45, 60, 90cm로 멀어집니다.',
+    answer: ['380V: 30cm', '1.5kV: 45cm', '6.6kV: 60cm', '22.9kV: 90cm'],
+    explanation: '전기 수치형은 단위까지 함께 말하는 연습이 필요합니다.',
+  },
+  {
+    id: 'practical-card-30',
+    subjectId: 'practical',
+    chapter: '건설안전',
+    prompt: '가설통로 설치 기준 3가지를 떠올려 보세요.',
+    recallCount: 3,
+    hint: '견-30-15-난',
+    mnemonic: '견고하게, 경사는 30도 이하, 15도 초과면 미끄럼 방지, 추락위험엔 난간.',
+    answer: ['견고한 구조', '경사는 30도 이하', '경사 15도 초과 시 미끄럼 방지 구조', '추락 위험 장소에는 안전난간 설치'],
+    explanation: '가설통로는 구조, 경사, 미끄럼, 추락방지를 한 묶음으로 암기하세요.',
+  },
+];
+
 const badgeLabels: Record<BadgeId, string> = {
   firstLesson: '첫 레슨 완료',
   perfectLesson: '만점 레슨',
@@ -971,6 +1318,10 @@ function getLessonQuestions(subjectId: SubjectId, lessonIndex: number) {
   return Array.from({ length: 10 }, (_, index) => pool[(lessonIndex * 10 + index) % pool.length]);
 }
 
+function getPracticalLessonCards(lessonIndex: number) {
+  return Array.from({ length: 10 }, (_, index) => practicalCards[(lessonIndex * 10 + index) % practicalCards.length]);
+}
+
 function getLevel(xp: number) {
   return Math.floor(xp / 120) + 1;
 }
@@ -992,18 +1343,29 @@ function App() {
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [lessonDone, setLessonDone] = useState(false);
+  const [showPracticalHint, setShowPracticalHint] = useState(false);
+  const [showPracticalAnswer, setShowPracticalAnswer] = useState(false);
 
   const activeSubject = subjects.find((subject) => subject.id === activeSubjectId) ?? subjects[0];
+  const isPracticalMode = activeSubjectId === 'practical';
   const lessonQuestions = useMemo(
     () => getLessonQuestions(activeSubjectId, lessonIndex),
     [activeSubjectId, lessonIndex],
   );
+  const practicalLessonCards = useMemo(() => getPracticalLessonCards(lessonIndex), [lessonIndex]);
+  const activeLessonItems: ReviewItem[] = isPracticalMode ? practicalLessonCards : lessonQuestions;
   const currentQuestion = lessonQuestions[questionIndex];
-  const answeredCurrent = currentQuestion ? answers[currentQuestion.id] : undefined;
-  const isCorrect = answeredCurrent === currentQuestion?.answer;
+  const currentPracticalCard = practicalLessonCards[questionIndex];
+  const currentItem = activeLessonItems[questionIndex];
+  const answeredCurrent = currentItem ? answers[currentItem.id] : undefined;
+  const isCorrect = isPracticalMode ? answeredCurrent === 1 : answeredCurrent === currentQuestion?.answer;
   const answeredCount = Object.keys(answers).length;
-  const score = lessonQuestions.filter((question) => answers[question.id] === question.answer).length;
+  const score = activeLessonItems.filter((item) =>
+    item.subjectId === 'practical' ? answers[item.id] === 1 : answers[item.id] === item.answer,
+  ).length;
   const wrongQuestions = questions.filter((question) => stats.wrongIds.includes(question.id));
+  const wrongPracticalCards = practicalCards.filter((card) => stats.wrongIds.includes(card.id));
+  const wrongItems: ReviewItem[] = [...wrongQuestions, ...wrongPracticalCards];
   const weakestSubject = subjects
     .map((subject) => {
       const attempt = stats.subjectAttempts[subject.id];
@@ -1024,6 +1386,8 @@ function App() {
     setSelectedChoice(null);
     setAnswers({});
     setLessonDone(false);
+    setShowPracticalHint(false);
+    setShowPracticalAnswer(false);
   }
 
   function chooseSubject(subjectId: SubjectId) {
@@ -1031,7 +1395,7 @@ function App() {
   }
 
   function submitChoice(choiceIndex: number) {
-    if (answeredCurrent !== undefined) {
+    if (answeredCurrent !== undefined || !currentQuestion) {
       return;
     }
 
@@ -1042,27 +1406,47 @@ function App() {
     }));
   }
 
+  function submitPracticalResult(didRecall: boolean) {
+    if (answeredCurrent !== undefined || !currentPracticalCard) {
+      return;
+    }
+
+    setShowPracticalAnswer(true);
+    setAnswers((current) => ({
+      ...current,
+      [currentPracticalCard.id]: didRecall ? 1 : 0,
+    }));
+  }
+
   function finishLesson() {
     const today = getTodayKey();
     const yesterday = getYesterdayKey();
     const nextStreak =
       stats.lastStudyDate === today ? stats.streak : stats.lastStudyDate === yesterday ? stats.streak + 1 : 1;
-    const wrongIdsInLesson = lessonQuestions
-      .filter((question) => answers[question.id] !== question.answer)
-      .map((question) => question.id);
-    const correctedIds = lessonQuestions
-      .filter((question) => answers[question.id] === question.answer)
-      .map((question) => question.id);
+    const wrongIdsInLesson = activeLessonItems
+      .filter((item) => (item.subjectId === 'practical' ? answers[item.id] !== 1 : answers[item.id] !== item.answer))
+      .map((item) => item.id);
+    const correctedIds = activeLessonItems
+      .filter((item) => (item.subjectId === 'practical' ? answers[item.id] === 1 : answers[item.id] === item.answer))
+      .map((item) => item.id);
     const nextWrongIds = uniqueList([...stats.wrongIds, ...wrongIdsInLesson]).filter(
       (id) => !correctedIds.includes(id) || wrongIdsInLesson.includes(id),
     );
     const nextAttempts = { ...stats.subjectAttempts };
 
-    lessonQuestions.forEach((question) => {
-      const current = nextAttempts[question.subjectId] ?? { total: 0, correct: 0 };
-      nextAttempts[question.subjectId] = {
+    activeLessonItems.forEach((item) => {
+      const current = nextAttempts[item.subjectId] ?? { total: 0, correct: 0 };
+      nextAttempts[item.subjectId] = {
         total: current.total + 1,
-        correct: current.correct + (answers[question.id] === question.answer ? 1 : 0),
+        correct:
+          current.correct +
+          (item.subjectId === 'practical'
+            ? answers[item.id] === 1
+              ? 1
+              : 0
+            : answers[item.id] === item.answer
+              ? 1
+              : 0),
       };
     });
 
@@ -1098,9 +1482,11 @@ function App() {
   }
 
   function goNext() {
-    if (questionIndex < lessonQuestions.length - 1) {
+    if (questionIndex < activeLessonItems.length - 1) {
       setQuestionIndex((current) => current + 1);
       setSelectedChoice(null);
+      setShowPracticalHint(false);
+      setShowPracticalAnswer(false);
       return;
     }
 
@@ -1108,11 +1494,11 @@ function App() {
   }
 
   function startMistakeLesson() {
-    if (wrongQuestions.length === 0) {
+    if (wrongItems.length === 0) {
       return;
     }
 
-    const firstWrong = wrongQuestions[0];
+    const firstWrong = wrongItems[0];
     resetLesson(firstWrong.subjectId, 0);
     setActiveTab('learn');
   }
@@ -1130,7 +1516,7 @@ function App() {
           <p className="eyebrow">산업안전기사 러닝 패스</p>
           <h1>오늘도 10문제로 안전 점수를 올려요</h1>
           <p className="lead">
-            기출형 4지선다 문제를 짧은 레슨으로 풀고, 오답과 약한 과목은 자동으로 다시 학습합니다.
+            필기는 기출형 4지선다로, 실기는 회상 카드로 짧게 반복하고 오답과 약한 과목은 자동으로 다시 학습합니다.
           </p>
         </div>
         <div className="profile-card" aria-label="학습 상태">
@@ -1187,53 +1573,116 @@ function App() {
                 <p className="eyebrow" style={{ color: activeSubject.color }}>
                   {activeSubject.title}
                 </p>
-                <h2>챕터 {lessonIndex + 1}. {currentQuestion.chapter}</h2>
+                <h2>챕터 {lessonIndex + 1}. {currentItem.chapter}</h2>
               </div>
               <div className="lesson-stats">
-                <span>하트 {getHearts(answeredCount, score)}/10</span>
+                <span>{isPracticalMode ? `회상 ${score}/10` : `하트 ${getHearts(answeredCount, score)}/10`}</span>
                 <span>{questionIndex + 1}/10</span>
               </div>
             </div>
 
             <div className="progress-track" aria-label="레슨 진행률">
-              <span style={{ width: `${((questionIndex + 1) / lessonQuestions.length) * 100}%` }} />
+              <span style={{ width: `${((questionIndex + 1) / activeLessonItems.length) * 100}%` }} />
             </div>
 
             {!lessonDone ? (
               <article className="question-card">
-                <p className="question-kicker">4지선다</p>
-                <h3>{currentQuestion.prompt}</h3>
-                <div className="choice-grid">
-                  {currentQuestion.choices.map((choice, index) => {
-                    const showResult = answeredCurrent !== undefined;
-                    const choiceClass = [
-                      'choice-button',
-                      selectedChoice === index ? 'selected' : '',
-                      showResult && index === currentQuestion.answer ? 'correct' : '',
-                      showResult && selectedChoice === index && index !== currentQuestion.answer ? 'wrong' : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ');
+                {isPracticalMode ? (
+                  <>
+                    <p className="question-kicker">필답형 회상 카드 · {currentPracticalCard.recallCount}개 쓰기</p>
+                    <h3>{currentPracticalCard.prompt}</h3>
+                    <div className="recall-pad" aria-label="필답형 암기 영역">
+                      <div>
+                        <span>1</span>
+                        머릿속이나 종이에 먼저 답을 써 보세요.
+                      </div>
+                      <div>
+                        <span>2</span>
+                        막히면 힌트를 보고 첫 글자로 복원하세요.
+                      </div>
+                      <div>
+                        <span>3</span>
+                        정답 키워드를 확인한 뒤 스스로 채점하세요.
+                      </div>
+                    </div>
 
-                    return (
+                    <div className="memory-tools">
                       <button
-                        key={choice}
-                        className={choiceClass}
-                        disabled={showResult}
-                        onClick={() => submitChoice(index)}
+                        className="secondary-button"
+                        disabled={showPracticalHint}
+                        onClick={() => setShowPracticalHint(true)}
                       >
-                        <span>{index + 1}</span>
-                        {choice}
+                        힌트 보기
                       </button>
-                    );
-                  })}
-                </div>
+                      <button
+                        className="secondary-button"
+                        disabled={showPracticalAnswer}
+                        onClick={() => setShowPracticalAnswer(true)}
+                      >
+                        정답 보기
+                      </button>
+                    </div>
 
-                {answeredCurrent !== undefined && (
-                  <div className={isCorrect ? 'feedback correct' : 'feedback wrong'}>
-                    <strong>{isCorrect ? '정답입니다' : '다시 볼 문제로 저장했어요'}</strong>
-                    <p>{currentQuestion.explanation}</p>
-                  </div>
+                    {showPracticalHint && (
+                      <div className="hint-box">
+                        <strong>힌트</strong>
+                        <p>{currentPracticalCard.hint}</p>
+                        <small>{currentPracticalCard.mnemonic}</small>
+                      </div>
+                    )}
+
+                    {showPracticalAnswer && (
+                      <div className="answer-reveal">
+                        {currentPracticalCard.answer.map((keyword) => (
+                          <span key={keyword}>{keyword}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    {answeredCurrent !== undefined && (
+                      <div className={isCorrect ? 'feedback correct' : 'feedback wrong'}>
+                        <strong>{isCorrect ? '회상 성공' : '오답노트에 저장했어요'}</strong>
+                        <p>{currentPracticalCard.explanation}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="question-kicker">4지선다</p>
+                    <h3>{currentQuestion.prompt}</h3>
+                    <div className="choice-grid">
+                      {currentQuestion.choices.map((choice, index) => {
+                        const showResult = answeredCurrent !== undefined;
+                        const choiceClass = [
+                          'choice-button',
+                          selectedChoice === index ? 'selected' : '',
+                          showResult && index === currentQuestion.answer ? 'correct' : '',
+                          showResult && selectedChoice === index && index !== currentQuestion.answer ? 'wrong' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ');
+
+                        return (
+                          <button
+                            key={choice}
+                            className={choiceClass}
+                            disabled={showResult}
+                            onClick={() => submitChoice(index)}
+                          >
+                            <span>{index + 1}</span>
+                            {choice}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {answeredCurrent !== undefined && (
+                      <div className={isCorrect ? 'feedback correct' : 'feedback wrong'}>
+                        <strong>{isCorrect ? '정답입니다' : '다시 볼 문제로 저장했어요'}</strong>
+                        <p>{currentQuestion.explanation}</p>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <div className="lesson-actions">
@@ -1243,17 +1692,28 @@ function App() {
                   >
                     다시 시작
                   </button>
-                  <button className="primary-button" disabled={answeredCurrent === undefined} onClick={goNext}>
-                    {questionIndex === lessonQuestions.length - 1 ? '레슨 완료' : '다음 문제'}
-                  </button>
+                  {isPracticalMode && answeredCurrent === undefined ? (
+                    <>
+                      <button className="secondary-button" onClick={() => submitPracticalResult(false)}>
+                        다시 볼래요
+                      </button>
+                      <button className="primary-button" onClick={() => submitPracticalResult(true)}>
+                        외웠어요
+                      </button>
+                    </>
+                  ) : (
+                    <button className="primary-button" disabled={answeredCurrent === undefined} onClick={goNext}>
+                      {questionIndex === activeLessonItems.length - 1 ? '레슨 완료' : '다음 문제'}
+                    </button>
+                  )}
                 </div>
               </article>
             ) : (
               <article className="result-card">
                 <p className="eyebrow">레슨 완료</p>
-                <h3>{score}/10 정답</h3>
+                <h3>{score}/10 {isPracticalMode ? '회상' : '정답'}</h3>
                 <p>
-                  XP {score * 12 + 20}점을 획득했습니다. 틀린 문제는 오답노트에 저장되고 다음 복습에 다시 등장합니다.
+                  XP {score * 12 + 20}점을 획득했습니다. {isPracticalMode ? '다시 보기를 선택한 카드는' : '틀린 문제는'} 오답노트에 저장되고 다음 복습에 다시 등장합니다.
                 </p>
                 <div className="result-actions">
                   <button className="secondary-button" onClick={() => setActiveTab('analytics')}>
@@ -1276,20 +1736,20 @@ function App() {
               <p className="eyebrow">오답노트</p>
               <h2>틀린 문제를 다시 만나게 됩니다</h2>
             </div>
-            <button className="primary-button" disabled={wrongQuestions.length === 0} onClick={startMistakeLesson}>
+            <button className="primary-button" disabled={wrongItems.length === 0} onClick={startMistakeLesson}>
               오답 복습 시작
             </button>
           </div>
 
           <div className="mistake-list">
-            {wrongQuestions.length === 0 ? (
+            {wrongItems.length === 0 ? (
               <div className="empty-state">아직 저장된 오답이 없습니다. 첫 레슨을 풀어보세요.</div>
             ) : (
-              wrongQuestions.map((question) => (
-                <article key={question.id} className="mistake-card">
-                  <span>{subjects.find((subject) => subject.id === question.subjectId)?.title}</span>
-                  <h3>{question.prompt}</h3>
-                  <p>{question.explanation}</p>
+              wrongItems.map((item) => (
+                <article key={item.id} className="mistake-card">
+                  <span>{subjects.find((subject) => subject.id === item.subjectId)?.title}</span>
+                  <h3>{item.prompt}</h3>
+                  <p>{item.explanation}</p>
                 </article>
               ))
             )}
